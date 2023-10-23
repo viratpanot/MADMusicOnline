@@ -1,4 +1,4 @@
-button class[row] { 
+button { 
 position: flex; 
 display : inline-block;
 right: 400px ;
