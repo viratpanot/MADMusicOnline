@@ -1,0 +1,10 @@
+button class[row] { 
+position: flex; 
+display : inline-block;
+right: 400px ;
+padding-top: 20px;
+padding-bottom: 20px;
+text-emphasis: 20px;
+touch-action: pinch-zoom;
+padding-inline-start: 2cm;
+}

@@ -1,0 +1,7 @@
+flask
+flask-sqlalchemy
+jinja2
+flask-restful
+datetime
+flask_script
+flask_migrate 
