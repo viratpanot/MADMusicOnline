@@ -9,7 +9,7 @@ class Song(db.Model):
     lyrics = db.Column(db.String(10000), nullable= False)
     created_on =db.Column(db.DateTime(timezone=True), default =datetime.utcnow())
     duration= db.Column(db.Integer, default = 0)
-    rating = db.Column(db.Integer, default= 0)
+    rating = db.Column(db.Integer)
     album_id = db.Column(db.Integer, db.ForeignKey('albums.album_id'), nullable= False)
     playlists = db.relationship('Playlist', backref = 'playlist', lazy = True)
     creater_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable= False)

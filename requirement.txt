@@ -5,3 +5,4 @@ flask-restful
 datetime
 flask_script
 flask_migrate 
+flask_login
