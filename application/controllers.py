@@ -16,21 +16,28 @@ def registration():
         return render_template('usr_reg.html')
     if request.method == 'POST' :
         user = User(
-            username=request.form["username"],
+            firstname =request.form["firstname"],
+            lastname =request.form["lastname"],
+            continent = request.form["continents"],
             email=request.form["email"],
-        )
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for("user_login", user_id=user.user_id))
+            password =request.form["password"],
+            )
+        password =request.form["password"]
+        confirmpassword =request.form["confirmpassword"]
+        if (password==confirmpassword):
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for("user_login"))
+        else :
+             return render_template('passwordvalidation.html')
 
-    return render_template("user/create.html")
-    
+
 @app.route("/user_login", methods = ['GET', 'POST'])
-def user_login(user_id):
+def user_login():
     if request.method == 'GET' :
         return render_template('usr_login.html')
     if request.method == 'POST' :
-        return render_template('user_dashboard.html', user_id )
+        return render_template('user_dashboard.html', email=request.form['email'], password =request.form["password"] )
 
 @app.route("/admin_login", methods = ['GET', 'POST'])
 def admin_login():
