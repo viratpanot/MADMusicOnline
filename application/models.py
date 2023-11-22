@@ -83,4 +83,7 @@ class User(db.Model):
                                 secondary = users,  backref = db.backref('associated_users', lazy = True))
     albums = db.relationship('Album', 
                               backref = db.backref('associated_albums', lazy = True))
+    
+    def __repr__(self):
+        return f'<User {self.firstname} {self.email}>'
 

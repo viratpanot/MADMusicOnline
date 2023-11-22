@@ -6,3 +6,5 @@ datetime
 flask_script
 flask_migrate 
 flask_login
+Flask-BasicAuth
+flask_admin
