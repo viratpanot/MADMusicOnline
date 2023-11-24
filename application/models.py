@@ -1,8 +1,5 @@
 from application.database import db
 from datetime import datetime
-
-
-
 class Album(db.Model):
     __tablename__ = 'album'
     __table_args__ = {'extend_existing': True}
@@ -28,12 +25,34 @@ users = db.Table(
     db.Column('playlist_id', db.Integer, db.ForeignKey('playlist.id'), primary_key=True),
     extend_existing=True
 )
+class User(db.Model):
+    __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
+    id = db.Column(db.Integer, autoincrement = True, primary_key = True )
+    firstname = db.Column(db.String(20), nullable = False, )
+    lastname = db.Column(db.String(20), nullable = False, )
+    continent= db.Column(db.String(20), nullable = False, )
+    email = db.Column(db.String(50), nullable = False, unique = True )
+    password = db.Column(db.String(12), nullable = False,)
+    is_creator = db.Column(db.Boolean, default = 0)
+    is_admin = db.Column(db.Boolean, default = 0)
+    playlists = db.relationship('Playlist',
+                                secondary = users,  backref = db.backref('associated_users', lazy = True))
+    albums = db.relationship('Album', 
+                              backref = db.backref('associated_albums', lazy = True))
+    
+    def __repr__(self):
+        return f'<User {self.firstname} {self.email}>'
+
+
 class Song(db.Model):
     __tablename__ = 'song'
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, autoincrement = True, primary_key = True )
     name = db.Column(db.String(100), nullable = False, unique = True )
     lyrics = db.Column(db.String(10000), nullable= False)
+    audio = db.Column(db.String(10000), nullable= False)
+    creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable= False)
     created_on =db.Column(db.DateTime(timezone=True), default =datetime.utcnow())
     duration= db.Column(db.Integer, default = 0)
     rating = db.Column(db.Integer)
@@ -68,22 +87,5 @@ class Playlist(db.Model):
 
 
 
-class User(db.Model):
-    __tablename__ = 'user'
-    __table_args__ = {'extend_existing': True}
-    id = db.Column(db.Integer, autoincrement = True, primary_key = True )
-    firstname = db.Column(db.String(20), nullable = False, )
-    lastname = db.Column(db.String(20), nullable = False, )
-    continent= db.Column(db.String(20), nullable = False, )
-    email = db.Column(db.String(50), nullable = False, unique = True )
-    password = db.Column(db.String(12), nullable = False,)
-    is_creator = db.Column(db.Boolean, default = 0)
-    is_admin = db.Column(db.Boolean, default = 0)
-    playlists = db.relationship('Playlist',
-                                secondary = users,  backref = db.backref('associated_users', lazy = True))
-    albums = db.relationship('Album', 
-                              backref = db.backref('associated_albums', lazy = True))
-    
-    def __repr__(self):
-        return f'<User {self.firstname} {self.email}>'
+
 

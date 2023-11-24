@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Album and Multiple Songs Upload</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container text-center bg-primary text-white">
+        <div class="col-8 gx=5 ">
+            <h1 class="display-3">MAD Music Online</h1>
+        </div>
+    </div>
+
+    <div class="container text-center bg-success p-2 text-dark bg-opacity-10">
+        <div class="col-8 gx=5">
+            <h1 class="display-4">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+                &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                &nbsp; &nbsp;&nbsp; &nbsp;
+
+            </h1>
+        </div>
+
+        <div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="container text-center bg-success p-2 text-dark bg-opacity-10">
+            <h1 class="display-4">Album Information</h1>
+            <h1 class="display-4">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; </h1>
+
+            <form method="POST" action='/upload' enctype="multipart/form-data">
+                <!-- Album Name -->
+                <div class="form-group row g=25">
+                    <label for="albumName" class="col-sm-2 col-form-label">Album Name</label>
+                    <div class="col-sm-10 g=25">
+                        <input type="text" name="albumName" class="form-control" id="albumName"
+                            placeholder="Enter Album Name" required>
+                    </div>
+                </div>
+
+                <!-- Album Genre -->
+                <div class="form-group row g=25">
+                    <label for="albumGenre" class="col-sm-2 col-form-label">Album Genre</label>
+                    <div class="col-sm-10 g=25">
+                        <select name="albumGenre" class="form-select">
+                            <option value="Pop">Pop</option>
+                            <option value="Rock">Punk Rock</option>
+                            <option value="Rock">Soulful</option>
+                            <option value="Rock">Lo-Fi</option>
+                            <option value="Rock">Bolly</option>
+                            <option value="Rock">Holly</option>
+                            <option value="Rock">Tolly</option>
+                            <option value="Hip Hop">Hip Hop</option>
+                            <option value="Country">Country</option>
+                            <!-- Add more genres as needed -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Album Artist -->
+                <div class="form-group row g=25">
+                    <label for="albumArtist" class="col-sm-2 col-form-label">Album Artist</label>
+                    <div class="col-sm-10 g=25">
+                        <input type="text" name="albumArtist" class="form-control" id="albumArtist"
+                            placeholder="Enter Album Artist">
+                    </div>
+                </div>
+
+
+                <br>
+
+                <h1 class="display-4">Song Information</h1>
+                <h1 class="display-4">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; </h1>
+
+                <!-- Add Multiple Songs -->
+                <div id="songs-container">
+                    <div class="song-container">
+                        <!-- Song Name -->
+                        <div class="form-group row g=25">
+                            <label for="songName" class="col-sm-2 col-form-label">Song Name</label>
+                            <div class="col-sm-10 g=25">
+                                <input type="text" name="songName[]" class="form-control" placeholder="Enter Song Name"
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Song Lyrics Upload (.txt) -->
+                        <div class="form-group row g=25">
+                            <label for="lyricsFile" class="col-sm-2 col-form-label">Lyrics File (.txt)</label>
+                            <div class="col-sm-10 g=25">
+                                <input type="file" name="lyricsFile[]" class="form-control" accept=".txt" required>
+                            </div>
+                        </div>
+
+                        <!-- Song Upload -->
+                        <div class="form-group row g=25">
+                            <label for="songFile" class="col-sm-2 col-form-label">Song Upload</label>
+                            <div class="col-sm-10 g=25">
+                                <input type="file" name="songFile[]" class="form-control" accept="audio/*" required>
+                            </div>
+                        </div>
+
+                        <!-- Song Duration -->
+                        <div class="form-group row g=25">
+                            <label for="songDuration" class="col-sm-2 col-form-label">Song Duration</label>
+                            <div class="col-sm-10 g=25">
+                                <input type="number" name="songDuration[]" class="form-control"
+                                    placeholder="Enter Song Duration-Optional">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button to Add More Songs -->
+                <button type="button" class="btn btn-outline-secondary" onclick="addSong()">Add More Songs</button>
+
+                <br>
+
+                <div class="btn btn-primary" role="group" aria-label="Basic outlined example">
+                    <button type="submit" class="btn btn-outline-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container text-center bg-success p-2 text-dark bg-opacity-10">
+        <div class="col-8 gx=5">
+            <h1 class="display-4">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+                &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+            </h1>
+        </div>
+    </div>
+
+    <script>
+        function addSong() {
+            // Clone the last song container
+            var lastSongContainer = document.querySelector('.song-container:last-child');
+            var newSongContainer = lastSongContainer.cloneNode(true);
+
+            // Clear input values in the cloned container
+            var inputs = newSongContainer.querySelectorAll('input');
+            inputs.forEach(function (input) {
+                input.value = '';
+            });
+
+            // Append the cloned container to the songs-container
+            document.getElementById('songs-container').appendChild(newSongContainer);
+        }
+    </script>
+</body>
+
+</html>

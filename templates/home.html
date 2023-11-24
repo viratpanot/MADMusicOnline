@@ -20,7 +20,17 @@
           </div>
         </form>
     </div>
-
+    <div>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul class=flashes>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+  </div>
     <div class="container text-center bg-success p-2 text-dark bg-opacity-10">
         <div class="col-8 gx=5">
           <h1 class = "display-4">    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;

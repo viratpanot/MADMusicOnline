@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.72.0">
-    <title>Product example · Bootstrap</title>
+    <title>user / creator Dashboard</title>
 
     <link rel="canonical" href="https://v5.getbootstrap.com/docs/5.0/examples/product/">
 
@@ -119,30 +119,70 @@
 </head>
 
 <body>
-
+  
     <nav class="site-header sticky-top py-1">
         <div class="container d-flex flex-column flex-md-row justify-content-between">
-            <h3 class="display-9 font-weight-normal" > {{ email }} </h3>
+            <h3 class="display-9 font-weight-normal" > {{ key }} Home  </h3>
             <a class="py-2 d-none d-md-inline-block" href="#">Tour</a>
             <a class="py-2 d-none d-md-inline-block" href="#">Product</a>
             <a class="py-2 d-none d-md-inline-block" href="#">Features</a>
             <a class="py-2 d-none d-md-inline-block" href="#">Enterprise</a>
             <a class="py-2 d-none d-md-inline-block" href="#">Support</a>
             <a class="py-2 d-none d-md-inline-block" href="#">Pricing</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Cart</a>
+            <a class="btn btn-outline-secondary" href="/user_login">  Logout </a>
         </div>
     </nav>
 
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        <form method="POST" action='/creator' autocomplete="on">
         <div class="col-md-5 p-lg-5 mx-auto my-5">
             <h1 class="display-4 font-weight-normal">MAD MUSIC ONLINE</h1>
             <p class="lead font-weight-normal">Enjoy The Code with Music.</p>
-            <a class="btn btn-outline-secondary" href="#">Be A Creator</a>
+            <a class="btn btn-outline-secondary" href="/creator">  {{ key }} , Be A Creator</a>
         </div>
         <div class="product-device shadow-sm d-none d-md-block"></div>
         <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+    </form>
     </div>
 
+    <p class="lead font-weight-normal"> {{ key }} </p>
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        <h2 class="display-5">Your Songs</h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            {% for song in user_songs %}
+            <div class="col d-flex align-items-start">
+                <div class="card flex-shrink-0">
+                    <audio controls>
+                        <source src="{{ song.audio }}" type="audio/mp3">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ song.name }}</h5>
+                        <a class="btn btn-outline-secondary" href="/song/{{song.id}}">  {{ song.lyrics }} </a>
+                       
+                       
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+  
+</body>
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
         <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
             <div class="my-3 py-3">
