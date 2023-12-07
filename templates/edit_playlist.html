@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.72.0">
+    <title>user / EDIT_PLAYLIST</title>
+
+    <link rel="canonical" href="https://v5.getbootstrap.com/docs/5.0/examples/product/">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+        integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+        integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+    <style>
+        .container {
+            max-width: 960px;
+        }
+
+
+
+        .site-header {
+            background-color: rgba(9, 84, 233, 0.85);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            backdrop-filter: saturate(180%) blur(20px);
+        }
+
+        .site-header a {
+            color: rgb(60, 4, 19);
+            transition: color .15s ease-in-out;
+        }
+
+        .site-header a:hover {
+            color: #fff;
+            text-decoration: none;
+        }
+
+
+        .product-device {
+            position: absolute;
+            right: 10%;
+            bottom: -30%;
+            width: 300px;
+            height: 540px;
+            background-color: #333;
+            border-radius: 21px;
+            transform: rotate(30deg);
+        }
+
+        .product-device::before {
+            position: absolute;
+            top: 10%;
+            right: 10px;
+            bottom: 10%;
+            left: 10px;
+            content: "";
+            background-color: rgba(255, 255, 255, .1);
+            border-radius: 5px;
+        }
+
+        .product-device-2 {
+            top: -25%;
+            right: auto;
+            bottom: 0;
+            left: 5%;
+            background-color: #e5e5e5;
+        }
+
+
+        .flex-equal>* {
+            flex: 1;
+        }
+
+        @media (min-width: 768px) {
+            .flex-md-equal>* {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+  
+    <nav class="site-header sticky-top py-1">
+        <div class="container d-flex flex-column flex-md-row justify-content-between">
+            <h3 class="display-9 font-weight-normal"> {{ key }} </h3>
+            <a class="btn btn-outline-dark" href="/user_home"> Home </a>
+            <h1 class="display-4 font-weight-normal">MAD MUSIC ONLINE</h1>
+            <a class="btn btn-outline" href="/user_login"> Logout </a>
+            <a class="btn btn-outline-primary" href="/"> Go To Registration/Admin Login </a>
+        </div>
+    </nav>
+    
+
+    <p class="lead font-weight-normal"> {{ key }} </p>
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+
+
+ <!-- Form to edit playlist -->
+
+ <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+    <!-- {% if playlist %} -->
+    <h2 class="display-5"> Songs in {{playlist.name}} </h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        {% for song in playlist.pl_songs %}
+        <div class="col d-flex align-items-start">
+            <div class="card flex-shrink-0" >
+                <audio controls>
+                    <source src="{{ url_for('static', filename=song.audio) }}" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="card-body">
+                    <h5 class="card-title">{{ song.name }}</h5>
+                    <a class="btn btn-outline-secondary" href="/song/{{ song.id }}">View Details</a>
+                    
+                    {# Add the link to remove the song from the playlist #}
+                    <a class="btn btn-outline-danger" href="/remove_song/{{ song.id }}/{{ playlist.id }}">Remove from Playlist</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+
+
+
+ <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-black overflow-hidden">
+    <div class="my-3 py-3">
+        <h2>Edit Playlist</h2>
+            <div class="container mt-5">
+                <h2>Add Song to Playlist</h2>
+        
+                <form method="POST" action="/edit_playlist/{{ playlist.id }}" class="playlist-form">
+                    <label for="selected_song_id">Select Song to Add:</label>
+                    <select id="selected_song_id" name="selected_song_id" required>
+                        {% for song in all_songs %}
+                        <option value="{{ song.id }}">{{ song.name }}</option>
+                        {% endfor %}
+                    </select>
+        
+                    <button type="submit">Add Song to Playlist</button>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+    </div>
+</div>
+
+</body>
+
+</html>

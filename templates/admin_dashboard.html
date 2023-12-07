@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.72.0">
-    <title>Product example · Bootstrap</title>
+    <title>ADMIN DASHBOARD</title>
 
     <link rel="canonical" href="https://v5.getbootstrap.com/docs/5.0/examples/product/">
 
@@ -122,14 +122,10 @@
 
     <nav class="site-header sticky-top py-1">
         <div class="container d-flex flex-column flex-md-row justify-content-between">
-            <h3 class="display-9 font-weight-normal" > {{ key }} </h3>
-            <a class="py-2 d-none d-md-inline-block" href="#">Tour</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Product</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Features</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Enterprise</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Support</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Pricing</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Cart</a>
+            <h3 class="display-9 font-weight-normal" > {{ key }}  </h3>
+
+            <a class="btn btn-outline-secondary" href="/">  Logout </a>
+            <a class="btn btn-outline-secondary" href="/user_login"> User Login </a>
         </div>
     </nav>
 
@@ -146,18 +142,34 @@
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
         <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
             <div class="my-3 py-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
+                <h2 class="display-5">APP Users</h2>
+                <p class="lead">MAD MUSIC ONLINE USERS STATISTICS.</p>
             </div>
             <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                              
+                    <p style="color: rgb(42, 2, 82);">Total Users: {{ total_users }}</p>
+                    <p style="color: rgb(42, 2, 82);">Total Creators: {{ total_creators }}</p>
+                    <p style="color: rgb(42, 2, 82);">Most Creative User: {{most_creative_user.firstname}}
+                         with {{count}} songs uploaded</p>
+                    
+
             </div>
         </div>
         <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
             <div class="my-3 p-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
+                <h2 class="display-5">APP Songs</h2>
+                <p class="lead">MAD MUSIC ONLINE SONGS STATISTICS</p>
             </div>
-            <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+            <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0; text-align: centre ;">
+
+                <p style="color: rgb(4, 255, 0);">Total Albums: {{ total_albums }}</p>
+                <p style="color: rgb(4, 255, 0);">Total Songs: {{ total_songs }}</p>
+                <p style="color: rgb(4, 255, 0);">total_playlist : {{total_playlist }}</p>
+                <p style="color: rgb(4, 255, 0);">total_song_likes: {{total_song_likes}}</p>
+                <p style="color: rgb(4, 255, 0);">total_playlist_likes: {{total_playlist_likes}}</p>
+                <p style="color: rgb(4, 255, 0);">total_song_ratings: {{total_song_ratings}}</p>
+                <p style="color: rgb(4, 255, 0);">total_playlist_ratings:{{total_playlist_ratings}}</p>
+               
             </div>
         </div>
     </div>

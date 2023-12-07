@@ -9,11 +9,17 @@
 </head>
 
 <body>
-    <div class="container text-center bg-primary text-white">
-        <div class="col-8 gx=5 ">
+    
+    <nav class="site-header sticky-top py-1 text-center bg-primary text-white">
+        <div class="container d-flex flex-column flex-md-row justify-content-between">
             <h1 class="display-3">MAD Music Online</h1>
+            <h3 class="display-9 font-weight-normal"> {{ key }} </h3>
+            <a class="btn btn-outline-secondary" href="/user_home"> Home </a>   
+            <a class="btn btn-outline-secondary" href="/user_login"> Logout </a>
+            <a class="btn btn-outline-secondary" href="/"> Go To Registration/Admin Login </a>
         </div>
-    </div>
+    </nav>
+    
 
     <div class="container text-center bg-success p-2 text-dark bg-opacity-10">
         <div class="col-8 gx=5">
@@ -63,12 +69,11 @@
                             <option value="Rock">Tolly</option>
                             <option value="Hip Hop">Hip Hop</option>
                             <option value="Country">Country</option>
-                            <!-- Add more genres as needed -->
                         </select>
                     </div>
                 </div>
 
-                <!-- Album Artist -->
+             
                 <div class="form-group row g=25">
                     <label for="albumArtist" class="col-sm-2 col-form-label">Album Artist</label>
                     <div class="col-sm-10 g=25">
@@ -83,10 +88,10 @@
                 <h1 class="display-4">Song Information</h1>
                 <h1 class="display-4">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; </h1>
 
-                <!-- Add Multiple Songs -->
+               
                 <div id="songs-container">
                     <div class="song-container">
-                        <!-- Song Name -->
+                      
                         <div class="form-group row g=25">
                             <label for="songName" class="col-sm-2 col-form-label">Song Name</label>
                             <div class="col-sm-10 g=25">
@@ -95,7 +100,7 @@
                             </div>
                         </div>
 
-                        <!-- Song Lyrics Upload (.txt) -->
+                       
                         <div class="form-group row g=25">
                             <label for="lyricsFile" class="col-sm-2 col-form-label">Lyrics File (.txt)</label>
                             <div class="col-sm-10 g=25">
@@ -103,7 +108,7 @@
                             </div>
                         </div>
 
-                        <!-- Song Upload -->
+                       
                         <div class="form-group row g=25">
                             <label for="songFile" class="col-sm-2 col-form-label">Song Upload</label>
                             <div class="col-sm-10 g=25">
@@ -111,7 +116,7 @@
                             </div>
                         </div>
 
-                        <!-- Song Duration -->
+                      
                         <div class="form-group row g=25">
                             <label for="songDuration" class="col-sm-2 col-form-label">Song Duration</label>
                             <div class="col-sm-10 g=25">
@@ -122,7 +127,7 @@
                     </div>
                 </div>
 
-                <!-- Button to Add More Songs -->
+                
                 <button type="button" class="btn btn-outline-secondary" onclick="addSong()">Add More Songs</button>
 
                 <br>

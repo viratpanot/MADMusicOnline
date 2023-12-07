@@ -40,16 +40,12 @@
     </style>
 
 
-    <!-- Custom styles for this template -->
-    <!-- <link href="product.css" rel="stylesheet"> -->
     <style>
         .container {
             max-width: 960px;
         }
 
-        /*
- * Custom translucent site header
- */
+
 
         .site-header {
             background-color: rgba(9, 84, 233, 0.85);
@@ -67,9 +63,6 @@
             text-decoration: none;
         }
 
-        /*
- * Dummy devices (replace them with your own or something else entirely!)
- */
 
         .product-device {
             position: absolute;
@@ -102,10 +95,6 @@
         }
 
 
-        /*
- * Extra utilities
- */
-
         .flex-equal>* {
             flex: 1;
         }
@@ -122,23 +111,53 @@
   
     <nav class="site-header sticky-top py-1">
         <div class="container d-flex flex-column flex-md-row justify-content-between">
-            <h3 class="display-9 font-weight-normal" > {{ key }} Home  </h3>
-            <a class="py-2 d-none d-md-inline-block" href="#">Tour</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Product</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Features</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Enterprise</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Support</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Pricing</a>
-            <a class="btn btn-outline-secondary" href="/user_login">  Logout </a>
+            <h3 class="display-9 font-weight-normal"> {{ key }} </h3>
+            <a class="btn btn-outline-dark" href="/user_home"> Home </a>
+    
+           
+           
+            <div class="mb-3">
+                <form method="post" action="/user_home">
+                    <label for="search" class="form-label visually-hidden">Search</label>
+                    <input type="text" class="form-control" id="search_all" name="search_all" placeholder="Search by">
+                    
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="search_type" id="searchSong" value="song" checked>
+                        <label class="form-check-label" for="searchSong">Song</label>
+                    </div>
+                    
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="search_type" id="searchAlbum" value="album">
+                        <label class="form-check-label" for="searchAlbum">Album</label>
+                    </div>
+                    
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="search_type" id="searchArtist" value="artist">
+                        <label class="form-check-label" for="searchArtist">Artist</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-outline-dark">Search</button>
+                </form>
+            </div>
+    
+            <a class="btn btn-outline" href="/user_login"> Logout </a>
+            <a class="btn btn-outline-primary" href="/"> Go To Registration/Admin Login </a>
         </div>
     </nav>
+    
+
 
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
         <form method="POST" action='/creator' autocomplete="on">
         <div class="col-md-5 p-lg-5 mx-auto my-5">
             <h1 class="display-4 font-weight-normal">MAD MUSIC ONLINE</h1>
             <p class="lead font-weight-normal">Enjoy The Code with Music.</p>
+            {% if user_iscreator == 1 %}
+            <a class="btn btn-outline-secondary" href="/creator">  {{ key }} , You are already Creator, Upload New Song</a>
+            {% endif %}
+            {% if user_iscreator == 0 %}
             <a class="btn btn-outline-secondary" href="/creator">  {{ key }} , Be A Creator</a>
+            {% endif %}
         </div>
         <div class="product-device shadow-sm d-none d-md-block"></div>
         <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
@@ -158,20 +177,20 @@
         {% endwith %}
     </div>
 
-
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-        <h2 class="display-5">Your Songs</h2>
+        {% if user_songsearch %}
+        <h2 class="display-5"> Song Search Result for {{search_key}} </h2>
         <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-            {% for song in user_songs %}
+            {% for song in user_songsearch %}
             <div class="col d-flex align-items-start">
-                <div class="card flex-shrink-0">
+                <div class="card flex-shrink-0" >
                     <audio controls>
                         <source src="{{ song.audio }}" type="audio/mp3">
                         Your browser does not support the audio element.
                     </audio>
                     <div class="card-body">
-                        <h5 class="card-title">{{ song.name }}</h5>
-                        <a class="btn btn-outline-secondary" href="/song/{{song.id}}">  {{ song.lyrics }} </a>
+                        <h5  class="card-title">{{ song.name }}</h5>
+                        <a class="btn btn-outline-secondary" href="/song/{{song.id}}">  View Details </a>
                        
                        
                     </div>
@@ -179,28 +198,176 @@
             </div>
             {% endfor %}
         </div>
+        {% endif %}
+    </div>
+  
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        {% if user_iscreator == 1 %}
+        <h2 class="display-5">Your Songs</h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            {% for song in user_songs %}
+            <div class="col d-flex align-items-start">
+                <div class="card flex-shrink-0" >
+                    <audio controls>
+                        <source src="{{ song.audio }}" type="audio/mp3">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div class="card-body">
+                        <h5  class="card-title">{{ song.name }}</h5>
+                        <a class="btn btn-outline-secondary" href="/song/{{song.id}}">  View Details </a>
+                        <a class="btn btn-outline-secondary" href="/delete_song/{{ song.id }}">Delete Song</a>
+                        <a class="btn btn-outline-secondary" href="/assign_album_to/{{song.id}}">Assign to Album</a>
+
+                       
+                       
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 
-  
-</body>
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-        <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-            <div class="my-3 py-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        {% if user_iscreator == 1 %}
+        <h2 class="display-5">Your Albums</h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            {% for album in user_albums %}
+            <div class="col d-flex align-items-start">
+                <div class="card flex-shrink-0" >                    
+                    <div class="card-body">
+                        <h5  class="card-title">{{ album.name }}</h5>
+                        <p class="card-text">Album Genre: {{ album.genre }}</p>
+                        <p class="card-text">Artist: {{ album.artist }}</p>
+                        <a class="btn btn-outline-secondary" href="/delete_album/{{ album.id }}">Delete album</a>
+                       
+                       
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        {% if user_iscreator == 0 or 1 and not user_songsearch %}
+        <h2 class="display-5"> Recommonded Songs on MAD Music Online </h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            {% for song in recom_songs %}
+            <div class="col d-flex align-items-start">
+                <div class="card flex-shrink-0" >
+                    <audio controls>
+                        <source src="{{ song.audio }}" type="audio/mp3">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div class="card-body">
+                        <h5  class="card-title">{{ song.name }}</h5>
+                        <a class="btn btn-outline-secondary" href="/song/{{song.id}}">  View Details </a>
+                        <p class="card-text">Likes: {{ song.likes }}</p>
+                        <p class="card-text"> Song Duration in seconds: {{ song.duration }}</p>
+                       
+                       
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-dark overflow-hidden">
+        <div class="my-3 py-3">
+            <a class="btn btn-outline-secondary" href="/create_playlist">{{ key }}, Create Playlist</a>
+    
+            <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-success">
+                <h2 class="display-5">Your Playlists</h2>
+    
+                <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+                    {% for playlist in user_playlists %}
+                        <div class="col d-flex align-items-start">
+                            <div class="card flex-shrink-0">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ playlist.name }}</h5>
+                                    <p class="card-text">Rating: {{ playlist.avg_rating|round(2) }}</p>
+                                    <a class="btn btn-outline-secondary" href="/playlist/{{ playlist.id }}">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-primary">
+                <h2 class="display-5">All the Playlists</h2>
+    
+                <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+                    {% for playlist in all_playlists %}
+                        <div class="col d-flex align-items-start">
+                            <div class="card flex-shrink-0">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ playlist.name }}</h5>
+                                    <p class="card-text">Rating: {{ playlist.avg_rating|round(2) }}</p>
+                                    <a class="btn btn-outline-secondary" href="/playlist/{{ playlist.id }}">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
             <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-            </div>
-        </div>
-        <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 p-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+            
             </div>
         </div>
     </div>
+
+   <!-- Genre Filter -->
+<div class="mb-3">
+    <form method="post" action="/user_home">
+        <label for="genre" class="form-label">Filter by Genre</label>
+        <select class="form-select" id="genre" name="genre">
+            <option value="Pop">Pop</option>
+            <option value="Rock">Punk Rock</option>
+            <option value="Soulful">Soulful</option>
+            <option value="Lo-Fi">Lo-Fi</option>
+            <option value="Bolly">Bolly</option>
+            <option value="Holly">Holly</option>
+            <option value="Tolly">Tolly</option>
+            <option value="Hip Hop">Hip Hop</option>
+            <option value="Country">Country</option>
+            
+        </select>
+        <button type="submit" class="btn btn-outline-secondary">Apply</button>
+    </form>
+</div>
+
+
+
+<div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-primary overflow-hidden">
+    <div class="my-3 py-3">
+        <h2 class="display-5">Songs by Genre {{genre_filter}} </h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            {% for song in genre_songs %}
+            <div class="col d-flex align-items-start">
+                <div class="card flex-shrink-0">
+                    <audio controls>
+                        <source src="{{ song.audio }}" type="audio/mp3">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div id="songcard" class="card-body">
+                        <h5 class="card-title">{{ song.name }}</h5>
+                        <p class="card-text">Rating: {{ song.avg_rating|round(2) }}</p>
+                        <a class="btn btn-outline-secondary" href="/song/{{ song.id }}">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+    </div>
+</div>
+
+</body>
 
 
     <footer class="container py-5">
