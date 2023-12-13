@@ -15,32 +15,74 @@ def home_page():
     if request.method == 'POST' :
         return url_for(registration)
 
-#Admin     
-
+# Admin login route
 basic_auth = BasicAuth(app)
-@app.route("/admin", methods = ['GET', 'POST'])
+@app.route("/admin", methods=['GET', 'POST'])
 @basic_auth.required
 def admin_login():
-    if request.method == 'GET' :
+    if request.method == 'GET':
         return render_template('admn_login.html')
-    if request.method == 'POST' :
+
+    if request.method == 'POST':
         uname = request.form.get("username")
         pwd = request.form.get("password")
-        print(request.form)
-        if uname == 'virat'  and pwd == 'jain' : 
+
+        if uname == 'virat' and pwd == 'jain':
             app.logger.info(f"Login successful for {uname}")
-            total_users = User.query.count()
-            total_creators = User.query.filter_by(is_creator=True).count()
-            total_albums = Album.query.count()
-            total_songs = Song.query.count()
-            total_playlist= Playlist.query.count()
-            total_song_likes = db.session.query(func.sum(Song.likes)).scalar()
-            total_playlist_likes = db.session.query(func.sum(Playlist.likes)).scalar()
-            total_song_ratings = db.session.query(func.count(SongRating.id)).scalar()
-            total_playlist_ratings = db.session.query(func.count(PlaylistRating.id)).scalar()
-            most_creative_user = db.session.query(User).join(Song).group_by(User.id).order_by(func.count().desc()).first()
-            count = db.session.query(func.count()).select_from(Song).filter_by(creater_id=most_creative_user.id).scalar()
-            return render_template('admin_dashboard.html', key='ADMIN PAGE', total_users=total_users,
+
+            # Creating an admin session
+            
+            admin_session = AdminSession(admin_username='virat')
+            admin_session.login_time = datetime.utcnow()
+            db.session.add(admin_session)
+            db.session.commit()
+
+            # Storing admin session information in Flask session
+            session['admin_logged_in'] = True
+            session['admin_session_id'] = admin_session.id
+
+            flash('Login successful!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Invalid email or password. Please try again.', 'error')
+            app.logger.warning(f"Login failed for {uname}")
+            flash('Wrong admin password or username. Please check with admin Virat for correct credentials', 'error')
+            return redirect(url_for("home_page"))
+
+# Admin dashboard route
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if not session.get('admin_logged_in'):
+        flash('You need to log in as an admin.', 'error')
+        return redirect(url_for('admin_login'))
+
+    # Retrieve admin session ID from the session
+    admin_session_id = session['admin_session_id']
+
+    # Fetch admin session from the database
+    admin_session = AdminSession.query.get(admin_session_id)
+
+    users = db.session.query(User).all()
+    total_users = User.query.count()
+    total_creators = User.query.filter_by(is_creator=True).count()
+    total_albums = Album.query.count()
+    total_songs = Song.query.count()
+    total_playlist= Playlist.query.count()
+    total_song_likes = db.session.query(func.sum(Song.likes)).scalar()
+    total_playlist_likes = db.session.query(func.sum(Playlist.likes)).scalar()
+    total_song_ratings = db.session.query(func.count(SongRating.id)).scalar()
+    total_playlist_ratings = db.session.query(func.count(PlaylistRating.id)).scalar()
+    most_creative_user = db.session.query(User).join(Song).group_by(User.id).order_by(func.count().desc()).first()
+    count = db.session.query(func.count()).select_from(Song).filter_by(creater_id=most_creative_user.id).scalar()
+    abusive_song = (db.session.query(Song).filter(Song.is_abusive == 1).all() )
+    abusive_songs = (
+                        db.session.query(Song, User)
+                        .join(User, Song.creater_id == User.id)
+                        .filter(Song.is_abusive == 1)
+                        .all()
+                    )
+
+    return render_template('admin_dashboard.html', key='ADMIN PAGE', total_users=total_users, users=users,
                            total_creators=total_creators,
                            total_albums=total_albums,
                            total_songs=total_songs,
@@ -49,12 +91,42 @@ def admin_login():
                            total_playlist_likes=total_playlist_likes,
                            total_song_ratings=total_song_ratings,
                            total_playlist_ratings=total_playlist_ratings,
-                           most_creative_user=most_creative_user, count=count)
-        else:
-            flash('Invalid email or password. Please try again.')
-            app.logger.warning(f"Login failed for {uname}")
-            flash('Wrong admin password or username, please check with admin Virat for correct credentials')
-            return redirect(url_for("home_page"))
+                           most_creative_user=most_creative_user, count=count,
+                           abusive_song=abusive_song,
+                           abusive_songs=abusive_songs)
+
+# Blacklist user route
+@app.route('/blacklist/<int:user_id>')
+def blacklist_user(user_id):
+    if not session.get('admin_logged_in'):
+        flash('You need to log in as an admin.', 'error')
+        return redirect(url_for('admin_login'))
+
+    admin_session_id = session['admin_session_id']
+    user = db.session.query(User).filter_by(id=user_id).first()
+    user.is_blacklisted = 1  
+    db.session.commit()
+    db.session.close()  
+    flash('User blacklisted successfully!', 'success')
+
+    return redirect(url_for('admin_dashboard'))
+
+# Whitelist user route
+@app.route('/whitelist/<int:user_id>')
+def whitelist_user(user_id):
+    if not session.get('admin_logged_in'):
+        flash('You need to log in as an admin.', 'error')
+        return redirect(url_for('admin_login'))
+
+    user = db.session.query(User).filter_by(id=user_id).first()
+
+    user.is_blacklisted = 0
+    db.session.commit()
+    db.session.close()
+    flash('User whitelisted successfully!', 'success')
+
+    return redirect(url_for('admin_dashboard'))
+
 
 
 #User Registration
@@ -103,7 +175,12 @@ def user_login():
         email = request.form.get("email")
         user = db.session.query(User).filter_by(email=email).first()
 
-        if user and (user.password == request.form.get("password")):
+        if user and user.is_blacklisted == 1:
+            flash(f'User {user.firstname} {user.lastname} ({user.email}) is Blacklisted by app admin. Contact admin Virat to come back in Whitelist', 'error')
+            return redirect(url_for('home_page'))
+        
+        
+        elif user and (user.password == request.form.get("password")):
             app.logger.info(f"Login successful for {email}")
             session['user_email'] = user.email
             session['user_firstname'] = user.firstname
@@ -227,6 +304,13 @@ def upload():
                 album_genre = request.form.get('albumGenre')
                 album_artist = request.form.get('albumArtist')
 
+
+                # Check if the album already exists for the current user
+                existing_album = Album.query.filter_by(name=album_name, creater_id=user.id).first()
+                if existing_album:
+                    flash('Album with the same name already exists.', 'error')
+                    return redirect(url_for('upload'))
+
                 # Create a new album instance
                 new_album = Album(name=album_name, genre=album_genre, artist=album_artist, creater_id= user.id)  
 
@@ -243,6 +327,15 @@ def upload():
                 # Iterate over the songs and add them to the database
                 for i in range(len(song_names)):
                     song_name = song_names[i]
+                    
+                    # Check if the song already exists in the album
+                    existing_song = Song.query.filter_by(name=song_name, album_id=new_album.id).first()
+                    if existing_song:
+                        flash(f'Song "{song_name}" already exists in the album.', 'error')
+                        # If a duplicate song is found, delete the newly created album to maintain data integrity
+                        db.session.delete(new_album)
+                        db.session.commit()
+                        return redirect(url_for('upload'))
                     lyrics_file = lyrics_files[i]
                     song_file = song_files[i]
                     
@@ -265,6 +358,8 @@ def upload():
                         album_id=new_album.id,  
                         
                     )
+
+
 
                     # Add the song to the database
                     db.session.add(new_song)
@@ -695,19 +790,3 @@ def abusive_song(song_id):
 
     return redirect(url_for('songs', song_id=song_id))
 
-#Report Abusive Playlist
-@app.route('/abusive_playlist/<int:playlist_id>', methods=['POST'])
-def abusive_playlist(playlist_id):
-    playlist = db.session.query(Playlist).filter_by(id=playlist_id).first()
-
-    if playlist:
-        try:
-            # Increment the likes count
-            playlist.is_abusive= 1
-            db.session.commit()
-            flash('Playlist reported abusive to admin!', 'success')
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error liking playlist: {str(e)}', 'error')
-
-    return redirect(url_for('playlist_details', playlist_id=playlist_id))

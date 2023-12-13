@@ -80,7 +80,6 @@ class Playlist(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, autoincrement = True, primary_key = True )
     name = db.Column(db.String(50), nullable = False, unique = True )
-    is_abusive = db.Column(db.Boolean, default = 0)
     likes = db.Column(db.Integer, default=0)
     ratings = db.relationship('PlaylistRating', backref='playlist', lazy=True)
     avg_rating = db.Column(db.Integer, default= 0)
@@ -114,6 +113,15 @@ class PlaylistRating(db.Model):
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False, default= 0)
 
+class AdminSession(db.Model):
+    __tablename__ = 'admin_session'
+    __table_args__ = {'extend_existing': True}
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    admin_username = db.Column(db.String(50), nullable=False)  
+    login_time = db.Column(db.DateTime(timezone=True), default=datetime.utcnow())
 
+
+    def __repr__(self):
+        return f'<AdminSession {self.admin_username} - Login Time: {self.login_time}, Logout Time: {self.logout_time}>'
 
 

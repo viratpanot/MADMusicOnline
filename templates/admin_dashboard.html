@@ -133,10 +133,23 @@
         <div class="col-md-5 p-lg-5 mx-auto my-5">
             <h1 class="display-4 font-weight-normal">MAD MUSIC ONLINE</h1>
             <p class="lead font-weight-normal">Welcome Admin</p>
-            <a class="btn btn-outline-secondary" href="#">Powerful People have more responsibility</a>
+            
         </div>
         <div class="product-device shadow-sm d-none d-md-block"></div>
         <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+    </div>
+
+    <p class="lead font-weight-normal"> {{ key }} </p>
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
     </div>
 
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
@@ -173,7 +186,60 @@
             </div>
         </div>
     </div>
+    <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+        <p class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">Powerful People have more responsibility, Take action on reported abusive data</p>
+    </div>
+    
+        <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 p-3">
+                <h2 class="display-5">Abusive Songs</h2>
+                <p class="lead">Details of reported abusive Songs</p>
+            </div>
+            <div> 
+                {% for abusive_song, user in abusive_songs %}
+                {% if abusive_songs|length == 0 %}
 
+                
+                    <p> No Songs reported abusive by users! </p>
+
+                              
+               
+
+                {%endif%}
+            </div>   
+                    <div class="col d-flex align-items-start">
+                        <div class="card flex-shrink-0">
+                            <audio controls>
+                                <source src="{{ abusive_song.audio }}" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ abusive_song.name }}</h5>
+                                <li>{{ abusive_song.name }} - uploaded by: {{ user.firstname }} {{ user.lastname }} ({{ user.email }})</li>
+
+                                {% if user.is_blacklisted==0 %}
+
+                                <a class="btn btn-outline-secondary" href="/blacklist/{{ abusive_song.creater_id }}">Blacklist {{ user.firstname }}</a>
+
+                                {%endif%}
+
+                                {% if user.is_blacklisted==1 %}
+
+                                <a class="btn btn-outline-secondary" href="/whitelist/{{ abusive_song.creater_id }}">Whitelist {{ user.firstname }}</a>
+
+                                {%endif%}
+
+
+                                <p class="card-text">Likes: {{ abusive_song.likes }}</p>
+                                <p class="card-text">Song Duration in seconds: {{ abusive_song.duration }}</p>
+                            </div>
+                        </div>
+                   
+                {% endfor %}
+            </div>
+        </div>
+    
+    
 
     <footer class="container py-5">
         <div class="row">
