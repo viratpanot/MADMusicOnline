@@ -119,9 +119,5 @@ class AdminSession(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     admin_username = db.Column(db.String(50), nullable=False)  
     login_time = db.Column(db.DateTime(timezone=True), default=datetime.utcnow())
-
-
-    def __repr__(self):
-        return f'<AdminSession {self.admin_username} - Login Time: {self.login_time}, Logout Time: {self.logout_time}>'
-
+    
 

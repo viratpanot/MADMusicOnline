@@ -374,7 +374,7 @@ def upload():
 
         except Exception as e:
             print(e)
-            flash('Error uploading album and songs.', 'error')
+            flash('Error uploading album and songs. Song with same title already exist. try changing the title', 'error')
             return redirect(url_for('upload'))
 
 
